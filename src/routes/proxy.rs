@@ -4,7 +4,12 @@ use reqwest::header::CONTENT_TYPE;
 
 use crate::{error::Result, get_client};
 
-pub async fn proxy(Query(url): Query<String>) -> Result<impl IntoResponse> {
+#[derive(serde::Deserialize)]
+pub struct ProxyOptions {
+    pub url: String
+}
+
+pub async fn proxy(Query(ProxyOptions { url }): Query<ProxyOptions>) -> Result<impl IntoResponse> {
     let resp = get_client().get(url).send().await?;
 
     let content_type = resp
